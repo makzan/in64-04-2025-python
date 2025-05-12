@@ -1,4 +1,4 @@
-def ask_ai(prompt):
+def ask_ai(prompt, image_url=None, model="google/gemini-2.0-flash-001"):
     import requests
 
     with open("openrouter-api-key.txt", "r") as file:
@@ -6,15 +6,35 @@ def ask_ai(prompt):
 
     url = "https://openrouter.ai/api/v1/chat/completions"
 
-    messages = [
-        {
-            "role": "user",
-            "content": prompt
-        }
-    ]
+    if image_url:
+        
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt
+                    },
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": image_url,
+                        }
+                    }
+                ]
+            }
+        ]
+    else:
+        messages = [
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ]
 
     payload = {
-        "model": "google/gemini-2.0-flash-001",
+        "model": model,
         "messages": messages
     }
     headers = {
